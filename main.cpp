@@ -1,7 +1,7 @@
 #include "SkipList.h"
 
 int main() {
-    BSkipList::SkipList<int, int> skipList(4);
+    BSkipList::SkipList<int, int> skipList(4, 0.25);
     skipList.insert(3, 3);
     skipList.insert(6, 6);
     skipList.insert(7, 7);
