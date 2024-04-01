@@ -12,9 +12,9 @@ class Node {
  public:
   Node(const K key, const V value, int level) : key_(key), value_(value), level_(level), forward_(level, nullptr) {}
 
-  K getKey() const { return key_; }
+  K GetKey() const { return key_; }
 
-  V getValue() const { return value_; }
+  V GetValue() const { return value_; }
 
   /** Store the pointers to the next nodes in each level */
   std::vector<std::shared_ptr<Node<K, V>>> forward_;
@@ -36,12 +36,14 @@ class SkipList {
       : curr_level_(0),
         max_level_(max_level),
         header_(std::make_shared<Node<K, V>>(K(), V(), max_level)),
+        size_(0),
         SKIPLIST_P(skiplist_p),
         mt_(std::random_device{}()),
         dis_(0, 0xFFFF){};
   void insert(K, V);
   void remove(K key);
   bool exist(K key);
+  int size() const;
 
  private:
   int getRandLevel();
@@ -50,6 +52,7 @@ class SkipList {
   int curr_level_;
   int max_level_;
   std::shared_ptr<Node<K, V>> header_;
+  int size_;
   std::mutex mutex_;
   /** Random number generator */
   std::mt19937 mt_;
