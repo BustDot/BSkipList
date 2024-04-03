@@ -45,7 +45,7 @@ class SkipList {
         dis_(0, 0xFFFF){};
   void insert(K, V);
   void remove(K key);
-  bool exist(K key);
+  bool find(K key, V &value);
   int size() const;
   void Print() const;
 
@@ -103,10 +103,45 @@ void SkipList<K, V>::insert(K key, V value) {
 }
 
 template <typename K, typename V>
-void SkipList<K, V>::remove(K key) {}
+void SkipList<K, V>::remove(K key) {
+  std::scoped_lock lock(mutex_);
+  auto cur = header_;
+  NodeVec<K, V> update(max_level_, nullptr);
+  for (int i = curr_level_; i >= 0; i--) {
+    while (cur->forward_[i] != nullptr && cur->forward_[i]->GetKey() < key) {
+      cur = cur->forward_[i];
+    }
+    update[i] = cur;
+  }
+  cur = cur->forward_[0];
+  if (cur != nullptr && cur->GetKey() == key) {
+    for (int i = 0; i <= curr_level_; i++) {
+      if (update[i]->forward_[i] != cur) {
+        break;
+      }
+      update[i]->forward_[i] = cur->forward_[i];
+    }
+    while (curr_level_ > 0 && header_->forward_[curr_level_] == nullptr) {
+      curr_level_--;
+    }
+    size_--;
+  }
+}
 
 template <typename K, typename V>
-bool SkipList<K, V>::exist(K key) {
+bool SkipList<K, V>::find(K key, V &value) {
+  std::scoped_lock lock(mutex_);
+  auto cur = header_;
+  for (int i = curr_level_; i >= 0; i--) {
+    while (cur->forward_[i] != nullptr && cur->forward_[i]->GetKey() < key) {
+      cur = cur->forward_[i];
+    }
+  }
+  cur = cur->forward_[0];
+  if (cur != nullptr && cur->GetKey() == key) {
+    value = cur->GetValue();
+    return true;
+  }
   return false;
 }
 
@@ -133,7 +168,7 @@ void SkipList<K, V>::Print() const {
 template <typename K, typename V>
 int SkipList<K, V>::getRandLevel() {
   int level = 1;
-  while (dis_(mt_) < SKIPLIST_P * 0xFFFF && level < max_level_) {
+  while (dis_(mt_) < SKIPLIST_P * 0xFFFF && level <= max_level_) {
     level++;
   }
   return level;

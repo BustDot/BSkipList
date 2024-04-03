@@ -1,3 +1,4 @@
+#include <cassert>
 #include "SkipList.h"
 
 int main() {
@@ -13,9 +14,18 @@ int main() {
   skipList.insert(21, 21);
   skipList.insert(25, 25);
   skipList.Print();
-  //    skipList.remove(17);
-  //    skipList.remove(19);
-  //    skipList.remove(21);
-  //    skipList.print();
+  assert(skipList.size() == 10);
+  int value;
+  assert(skipList.find(19, value));
+  assert(value == 19);
+
+  skipList.remove(17);
+  skipList.remove(19);
+  skipList.remove(21);
+  skipList.Print();
+  assert(skipList.size() == 7);
+  assert(!skipList.find(17, value));
+  assert(!skipList.find(19, value));
+  assert(!skipList.find(21, value));
   return 0;
 }
