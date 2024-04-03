@@ -168,7 +168,7 @@ void SkipList<K, V>::Print() const {
 template <typename K, typename V>
 int SkipList<K, V>::getRandLevel() {
   int level = 1;
-  while (dis_(mt_) < SKIPLIST_P * 0xFFFF && level <= max_level_) {
+  while (dis_(mt_) < SKIPLIST_P * 0xFFFF && level < max_level_) {
     level++;
   }
   return level;

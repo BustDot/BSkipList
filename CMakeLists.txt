@@ -17,4 +17,6 @@ file(GLOB SRC_LIST "${PROJECT_SOURCE_DIR}/src/*.cpp")
 
 add_executable(test test.cpp)
 
+add_executable(stress_test stress_test.cpp)
+
 #target_link_libraries(test BSkipList)
